@@ -23,7 +23,7 @@ if (!isset($_SESSION['user'])) {
         <div class="flag">
             <?php
             if ($_SESSION['role'] === 'normal') {
-                echo nl2br(htmlspecialchars(file_get_contents('/home/library-user/user.txt')));
+                echo nl2br(htmlspecialchars(@file_get_contents('/home/library-user/user.txt')));
             } else {
                 echo "FLAG{user_flag_here}";
             }

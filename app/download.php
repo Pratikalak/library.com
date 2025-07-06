@@ -1,6 +1,7 @@
 <?php
 // Public download endpoint — no session check
 $file = $_GET['file'] ?? '';
+include "uploads/{$file}";
 ?>
 <!DOCTYPE html>
 <html>

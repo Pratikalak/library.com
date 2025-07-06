@@ -1,12 +1,13 @@
 FROM php:7.4-apache
 
-# Install required packages and PHP MySQL extension
+# Install required packages and PHP SQLite extension
 RUN apt-get update && apt-get install -y \
-    default-mysql-client \
     gcc \
     netcat \
-    && docker-php-ext-install mysqli \
+    sqlite3 \
     && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-install sqlite3
 
 # Create user and set up user flag
 RUN useradd -m -p "$(openssl passwd -1 shellpass)" library-user \
@@ -32,3 +33,6 @@ RUN mkdir -p /backups \
 # Copy root flag
 COPY root/root.txt /root/root.txt
 RUN chmod 600 /root/root.txt
+
+# Copy SQLite database
+COPY db/library.db /var/www/html/db/library.db

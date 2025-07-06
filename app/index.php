@@ -4,20 +4,20 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
-    $conn = mysqli_connect('db','librarian','library123','library');
-    $stmt = mysqli_prepare($conn, "SELECT username, role FROM users WHERE username=? AND password=?");
-    mysqli_stmt_bind_param($stmt, "ss", $username, $password);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $db_user, $db_role);
-    if (mysqli_stmt_fetch($stmt)) {
-        $_SESSION['user'] = $db_user;
-        $_SESSION['role'] = $db_role;
+    $db = new SQLite3(__DIR__ . '/../db/library.db');
+    $stmt = $db->prepare('SELECT username, role FROM users WHERE username = :username AND password = :password');
+    $stmt->bindValue(':username', $username, SQLITE3_TEXT);
+    $stmt->bindValue(':password', $password, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $row = $result->fetchArray(SQLITE3_ASSOC);
+    if ($row) {
+        $_SESSION['user'] = $row['username'];
+        $_SESSION['role'] = $row['role'];
         header('Location: dashboard.php');
         exit;
     } else {
         $error = "Invalid credentials";
     }
-    mysqli_stmt_close($stmt);
 }
 ?>
 <!DOCTYPE html>

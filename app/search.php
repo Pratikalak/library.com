@@ -1,12 +1,8 @@
 <?php
 // Public search endpoint — no session check
 $q = $_GET['q'] ?? '';
-$conn = mysqli_connect('db','librarian','library123','library');
-if (!$conn) { die('DB connection error'); }
-
-$sql = "SELECT * FROM books WHERE title LIKE '%$q%'";
-$res = mysqli_query($conn, $sql);
-if (!$res) { die('Query error: '.mysqli_error($conn)); }
+$db = new SQLite3(__DIR__ . '/../db/library.db');
+$res = $db->query("SELECT * FROM books WHERE title LIKE '%$q%'");
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,8 +24,8 @@ if (!$res) { die('Query error: '.mysqli_error($conn)); }
         </form>
         <div class="results">
             <?php
-            while($row = mysqli_fetch_assoc($res)) {
-                echo "<div class='book'>{$row['title']}</div>";
+            while($row = $res->fetchArray(SQLITE3_ASSOC)) {
+                echo "<div>{$row['title']}</div>";
             }
             ?>
         </div>
