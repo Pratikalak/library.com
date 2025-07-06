@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['user']) || $_SESSION['user'] !== 'admin') {
+if (!isset($_SESSION['user'])) {
     header('Location: index.php');
     exit;
 }
@@ -19,9 +19,15 @@ if (!isset($_SESSION['user']) || $_SESSION['user'] !== 'admin') {
 </head>
 <body>
     <div class="container">
-        <h2>Welcome, admin</h2>
+        <h2>Welcome, <?php echo htmlspecialchars($_SESSION['user']); ?></h2>
         <div class="flag">
-            FLAG{user_flag_here}
+            <?php
+            if ($_SESSION['role'] === 'normal') {
+                echo nl2br(htmlspecialchars(file_get_contents('/home/library-user/user.txt')));
+            } else {
+                echo "FLAG{user_flag_here}";
+            }
+            ?>
         </div>
         <div class="nav">
             <a href="search.php">Search Books</a>

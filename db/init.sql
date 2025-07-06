@@ -10,6 +10,17 @@ CREATE TABLE IF NOT EXISTS books (
     year INT
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(32) NOT NULL
+);
+
+INSERT INTO users (username, password, role) VALUES
+('normal', 'library123', 'normal'),
+('admin', 'admin123', 'admin');
+
 INSERT INTO books (title, author, year) VALUES
 ('The Great Gatsby', 'F. Scott Fitzgerald', 1925),
 ('To Kill a Mockingbird', 'Harper Lee', 1960),
