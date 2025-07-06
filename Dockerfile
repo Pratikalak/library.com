@@ -1,14 +1,15 @@
 FROM php:7.4-apache
 
-# Install required packages
+# Install required packages and PHP MySQL extension
 RUN apt-get update && apt-get install -y \
     default-mysql-client \
     gcc \
     netcat \
+    && docker-php-ext-install mysqli \
     && rm -rf /var/lib/apt/lists/*
 
 # Create user and set up user flag
-RUN useradd -m -p $(openssl passwd -1 shellpass) library-user \
+RUN useradd -m -p "$(openssl passwd -1 shellpass)" library-user \
     && echo "FLAG{user_flag_here}" > /home/library-user/user.txt \
     && chmod 644 /home/library-user/user.txt
 
