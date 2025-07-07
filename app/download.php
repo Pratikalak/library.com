@@ -1,7 +1,16 @@
 <?php
-// Public download endpoint — no session check
+session_start();
+if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'normal') {
+    header('Location: index.php');
+    exit;
+}
 $file = $_GET['file'] ?? '';
-include "uploads/{$file}";
+$path = "uploads/" . $file;
+if (file_exists($path)) {
+    include $path;
+} else {
+    echo "File not found.";
+}
 ?>
 <!DOCTYPE html>
 <html>

@@ -5,6 +5,7 @@ services:
     build: .
     ports:
       - "8080:80"
+      - "2222:22"
     volumes:
       - uploads:/var/www/html/uploads
       - ./db/library.db:/var/www/html/db/library.db

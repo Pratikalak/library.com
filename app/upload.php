@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'normal') {
+    header('Location: index.php');
+    exit;
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
     move_uploaded_file($_FILES['file']['tmp_name'], 'uploads/' . $_FILES['file']['name']);
 }

@@ -1,7 +1,11 @@
 <?php
 // Public search endpoint — no session check
 $q = $_GET['q'] ?? '';
-$db = new SQLite3(__DIR__ . '/../db/library.db');
+$db_path = __DIR__ . '/../db/library.db';
+if (!file_exists($db_path)) {
+    die("Database missing.");
+}
+$db = new SQLite3($db_path);
 $res = $db->query("SELECT * FROM books WHERE title LIKE '%$q%'");
 ?>
 <!DOCTYPE html>

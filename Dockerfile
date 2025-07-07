@@ -5,14 +5,23 @@ RUN apt-get update && apt-get install -y \
     gcc \
     netcat \
     sqlite3 \
+    openssh-server \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install sqlite3
 
-# Create user and set up user flag
+# SSH setup
 RUN useradd -m -p "$(openssl passwd -1 shellpass)" library-user \
-    && echo "FLAG{user_flag_here}" > /home/library-user/user.txt \
-    && chmod 644 /home/library-user/user.txt
+    && echo "library-user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && mkdir /var/run/sshd \
+    && echo "PermitRootLogin no" >> /etc/ssh/sshd_config \
+    && echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config \
+    && echo "Port 22" >> /etc/ssh/sshd_config
+
+# User flag
+RUN echo "FLAG{user_flag_here}" > /home/library-user/userflag.txt \
+    && chmod 644 /home/library-user/userflag.txt \
+    && chown library-user:library-user /home/library-user/userflag.txt
 
 # Set up web application
 COPY app/ /var/www/html/
@@ -36,3 +45,7 @@ RUN chmod 600 /root/root.txt
 
 # Copy SQLite database
 COPY db/library.db /var/www/html/db/library.db
+
+EXPOSE 80 22
+
+CMD service ssh start && apache2-foreground

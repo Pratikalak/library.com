@@ -4,19 +4,24 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
-    $db = new SQLite3(__DIR__ . '/../db/library.db');
-    $stmt = $db->prepare('SELECT username, role FROM users WHERE username = :username AND password = :password');
-    $stmt->bindValue(':username', $username, SQLITE3_TEXT);
-    $stmt->bindValue(':password', $password, SQLITE3_TEXT);
-    $result = $stmt->execute();
-    $row = $result->fetchArray(SQLITE3_ASSOC);
-    if ($row) {
-        $_SESSION['user'] = $row['username'];
-        $_SESSION['role'] = $row['role'];
-        header('Location: dashboard.php');
-        exit;
+    $db_path = __DIR__ . '/../db/library.db';
+    if (!file_exists($db_path)) {
+        $error = "Database missing. Contact admin.";
     } else {
-        $error = "Invalid credentials";
+        $db = new SQLite3($db_path);
+        $stmt = $db->prepare('SELECT username, password, role FROM users WHERE username = :username AND password = :password');
+        $stmt->bindValue(':username', $username, SQLITE3_TEXT);
+        $stmt->bindValue(':password', $password, SQLITE3_TEXT);
+        $result = $stmt->execute();
+        $row = $result->fetchArray(SQLITE3_ASSOC);
+        if ($row && $row['username'] === 'normal' && $row['password'] === 'library123') {
+            $_SESSION['user'] = $row['username'];
+            $_SESSION['role'] = $row['role'];
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            $error = "Access Denied.";
+        }
     }
 }
 ?>
